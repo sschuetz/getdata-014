@@ -56,9 +56,13 @@ x_test <- read.table("UCI HAR Dataset/test/X_test.txt",
                      header = FALSE ,col.names = features$description)
 x_test <- tbl_df(x_test)
 
-y_test <- read.table("UCI HAR Dataset/test/y_test.txt",header = FALSE)
+y_test <- read.table("UCI HAR Dataset/test/y_test.txt",header = FALSE, col.names = c("activityID"))
+y_test <- mutate(y_test, activity_label = activity_labels[activityID,]$activity)
 
-subject_test <- read.table("UCI HAR Dataset/test/subject_test.txt", header = FALSE)
+subject_test <- read.table("UCI HAR Dataset/test/subject_test.txt", header = FALSE, col.names = c("subject"))
+
+test <- cbind(x_test, y_test)
+test <- cbind(test, subject_test)
 
 ##
 
@@ -68,8 +72,18 @@ x_train <- read.table("UCI HAR Dataset/train/X_train.txt",
                      header = FALSE ,col.names = features$description)
 x_train <- tbl_df(x_train)
 
-y_train <- read.table("UCI HAR Dataset/train/y_train.txt",header = FALSE)
+y_train <- read.table("UCI HAR Dataset/train/y_train.txt",header = FALSE, col.names = c("activityID"))
+y_train <- mutate(y_train, activity_label = activity_labels[activityID,]$activity)
 
-subject_train <- read.table("UCI HAR Dataset/train/subject_train.txt", header = FALSE)
+subject_train <- read.table("UCI HAR Dataset/train/subject_train.txt", header = FALSE, col.names = c("subject"))
+
+train <- cbind(x_train, y_train)
+train <- cbind(train, subject_train)
 
 ##
+
+workingDataset <- union(test, train)
+workingDataset <- tbl_df(workingDataset)
+
+
+
