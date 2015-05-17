@@ -48,12 +48,13 @@ activity_labels <- tbl_df(activity_labels)
 
 features <- read.table("UCI HAR Dataset/features.txt", 
                        sep = " ", header = FALSE, col.names = c("id", "description"))
-features <- tbl_df(features)
-
+features$description <- as.character(features$description)
+features_index <- grep("mean()|std()", features$description)
 ##
 
-x_test <- read.table("UCI HAR Dataset/test/X_test.txt", 
-                     header = FALSE ,col.names = features$description)
+x_test <- read.table("UCI HAR Dataset/test/X_test.txt", header = FALSE)
+x_test <- select(x_test, features_index)
+names(x_test) <- features$description[features_index]
 x_test <- tbl_df(x_test)
 
 y_test <- read.table("UCI HAR Dataset/test/y_test.txt",header = FALSE, col.names = c("activityID"))
@@ -68,8 +69,9 @@ test <- cbind(test, subject_test)
 
 ##
 
-x_train <- read.table("UCI HAR Dataset/train/X_train.txt", 
-                     header = FALSE ,col.names = features$description)
+x_train <- read.table("UCI HAR Dataset/train/X_train.txt", header = FALSE)
+x_train <- select(x_train, features_index)
+names(x_train) <- features$description[features_index]
 x_train <- tbl_df(x_train)
 
 y_train <- read.table("UCI HAR Dataset/train/y_train.txt",header = FALSE, col.names = c("activityID"))
@@ -82,8 +84,8 @@ train <- cbind(train, subject_train)
 
 ##
 
-workingDataset <- union(test, train)
-workingDataset <- tbl_df(workingDataset)
+workingDataset <- tbl_df(union(test, train))
 
-
+step5Dataset <- workingDataset %>% group_by(subject, activity_label) %>% summarise_each(funs(mean))
+write.table(step5Dataset, file = "tidyDataset.txt", row.names = FALSE, append = FALSE)
 
