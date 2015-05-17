@@ -42,3 +42,34 @@ if(FALSE %in% file.exists(datasetFilenames)) {
   stop("missing files")
 }
 
+activity_labels <- read.table("UCI HAR Dataset/activity_labels.txt", 
+                              sep = " ", header = FALSE, col.names = c("id", "activity"))
+activity_labels <- tbl_df(activity_labels)
+
+features <- read.table("UCI HAR Dataset/features.txt", 
+                       sep = " ", header = FALSE, col.names = c("id", "description"))
+features <- tbl_df(features)
+
+##
+
+x_test <- read.table("UCI HAR Dataset/test/X_test.txt", 
+                     header = FALSE ,col.names = features$description)
+x_test <- tbl_df(x_test)
+
+y_test <- read.table("UCI HAR Dataset/test/y_test.txt",header = FALSE)
+
+subject_test <- read.table("UCI HAR Dataset/test/subject_test.txt", header = FALSE)
+
+##
+
+##
+
+x_train <- read.table("UCI HAR Dataset/train/X_train.txt", 
+                     header = FALSE ,col.names = features$description)
+x_train <- tbl_df(x_train)
+
+y_train <- read.table("UCI HAR Dataset/train/y_train.txt",header = FALSE)
+
+subject_train <- read.table("UCI HAR Dataset/train/subject_train.txt", header = FALSE)
+
+##
