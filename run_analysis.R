@@ -1,5 +1,6 @@
 library(dplyr)
 library(tidyr)
+library(stringi)
 
 datasetURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 destFilename <- "Dataset.zip"
@@ -40,6 +41,14 @@ download_and_unzip_dataset <- function () {
 
 if(FALSE %in% file.exists(datasetFilenames)) {
   stop("missing files")
+}
+
+replace_name <- function(s) {
+  result <- s
+  if(stri_startswith_fixed(s, "f") || stri_startswith_fixed(s, "t")) {
+    result <- paste("avg(", s, ")", sep = "")
+  }
+  result
 }
 
 activity_labels <- read.table("UCI HAR Dataset/activity_labels.txt", 
@@ -86,6 +95,7 @@ train <- cbind(train, subject_train)
 
 workingDataset <- tbl_df(union(test, train))
 
-step5Dataset <- workingDataset %>% group_by(subject, activity_label) %>% summarise_each(funs(mean))
+step5Dataset <- workingDataset %>% group_by(subject, activity_label) %>% summarise_each(funs(mean)) %>% select(-activityID)
+names(step5Dataset) <- lapply(names(step5Dataset), replace_name)
 write.table(step5Dataset, file = "tidyDataset.txt", row.names = FALSE, append = FALSE)
 
