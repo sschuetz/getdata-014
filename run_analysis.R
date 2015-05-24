@@ -78,3 +78,4 @@ step5Dataset <- workingDataset %>% group_by(subject, activity_label) %>% summari
 names(step5Dataset) <- lapply(names(step5Dataset), replace_name)
 write.table(step5Dataset, file = "tidyDataset.txt", row.names = FALSE, append = FALSE)
 
+##
